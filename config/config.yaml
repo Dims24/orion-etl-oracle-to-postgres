@@ -1,0 +1,50 @@
+global:
+  logging:
+    # Путь к файлу с логами ошибок ETL
+    log_file: error/etl_error.log
+    # Уровень логирования в консоль (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    console_level: INFO
+    # Уровень логирования в файл (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    file_level: ERROR
+
+  # Размер батча для пакетной обработки записей
+  batch_size: 5000
+
+  # Плагин автоматического маппинга столбцов
+  auto_mapping_plugin: directory_column_mapping
+
+  # Папка с описаниями таблиц (YAML-файлами)
+  tables_folder: tables
+
+  # Плагин для извлечения данных
+  fetcher_plugin: extended_fetcher
+
+  # Список плагинов для трансформации
+  transform_plugins:
+    - default_transform
+    - default_lookup
+
+  # Список плагинов для валидации
+  validation_plugins:
+    - default_validation
+
+  # Коннекторы к источникам/приёмникам данных
+  connectors:
+    oracle:
+      client_lib_dir: /opt/oracle/instantclient/instantclient_21_17
+      user: ORACLE_USER
+      password: ORACLE_PASSWORD
+      host: oracle.example.com
+      port: 1521
+      service_name: ORCL
+
+    postgres:
+      user: POSTGRES_USER
+      password: POSTGRES_PASSWORD
+      host: postgres.example.com
+      port: 5432
+      database: my_database
+
+  # Список файлов с описаниями таблиц для загрузки
+  table_files:
+    - table_example.yaml

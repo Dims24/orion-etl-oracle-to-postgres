@@ -1,0 +1,19 @@
+networks:
+  mgfoms-vsi-prototype-databases-network:
+    name: mgfoms-vsi-prototype-databases-network
+    driver: bridge
+
+services:
+  etl:
+    build:
+      context: .
+      dockerfile: docker/image/Dockerfile
+    container_name: etl_app
+    restart: "no"
+    volumes:
+      - ./:/app:ro
+      - ./config:/app/config:rw
+      - ./data:/app/data:rw
+    entrypoint: [ "python", "cli.py"]
+    networks:
+      - mgfoms-vsi-prototype-databases-network

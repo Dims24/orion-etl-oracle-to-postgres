@@ -1,0 +1,61 @@
+# Имя таблицы-источника и схема в Oracle
+source_table: EMPLOYEES
+source_schema: HR
+
+# Имя таблицы-приёмника и схема в Postgres
+target_table: employees
+target_schema: public
+
+# Плагин выборки (если нужен отличный от глобального)
+fetcher_plugin: incremental_fetcher
+
+# Условие для выборки только актуальных записей
+where: "status = 'ACTIVE'"
+
+# Если true — будут использованы только локальные transform_plugins
+transform_override: false
+
+# Локальные плагины преобразования (применяются после глобальных)
+transform_plugins:
+  - normalize_names
+  - calculate_age_transform
+
+# Плагин загрузки (override глобального)
+loader_plugin: bulk_loader
+
+# Правила маппинга колонок
+mappings:
+  - source: EMP_ID
+    target: id
+    transform: to_int
+    validation:
+      - type: regex
+        pattern: "^[0-9]+$"
+        on_fail: error
+
+  - source: FIRST_NAME
+    target: first_name
+    transform: trim,capitalize
+
+  - source: LAST_NAME
+    target: last_name
+    transform: trim,capitalize
+
+  - source: DEPT_ID
+    target: department_name
+    lookup:
+      table: departments
+      key_column: dept_id
+      value_column: dept_name
+      on_missing: null
+
+  - source: HIRE_DATE
+    target: hire_date
+    transform: to_date
+
+  - source: SALARY
+    target: salary
+    validation:
+      - type: range
+        pattern: ">=0"
+        on_fail: default:0
